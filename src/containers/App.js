@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import CardList from '../components/CardList'
 import SearchBox from '../components/SearchBox'
 import Scroll from '../components/Scroll'
@@ -6,60 +6,54 @@ import ErrorBoundary from '../components/ErrorBoundary'
 
 // import { robots } from './robots';
 
-class App extends React.Component {
-    constructor() {
-        super()
-        this.state = {
-            robots: [],
-            searchText: ''
-        }
+function App()  {
+    // Declare the 'state' variables using State Hooks
+    const [searchText, setSearchText] = useState('');
+    const [robots, setRobots] = useState([]);
 
-        // this.handleSearchTextChange = this.handleSearchTextChange.bind(this)
-    }
-
-    componentDidMount() {
+    // Declare the effects using Effect Hook
+    useEffect(() => {
+        console.log('Calling useEffect()')
         fetch('https://jsonplaceholder.typicode.com/users')
-            .then(response=> {
-                return response.json()
-            })
-            .then(users => {
-                this.setState(() => ({
-                    robots: users
-                }))
-            })
-    }
-
-    handleSearchTextChange = (event) => {
-        this.setState(() => ({ searchText: event.target.value}))
-        // const filteredRobots = this.state.robots.filter((robot) => {
-        //     return robot.name.toLowerCase().includes(event.target.value.toLowerCase())
-        // })
-            
-        // console.log(filteredRobots)
-    }
-
-    render () {
-        const { robots, searchText } = this.state
-        const filteredRobots = robots.filter((robot) => {
-            return robot.name.toLowerCase().includes(searchText.toLowerCase())
+        .then(response=> {
+            return response.json()
         })
-            
-        if (!robots.length) {
-            return <h3>Loading...</h3>
-        } else {
-            return (
+        .then(users => {
+            setRobots(users)
+        })
+        // Add the [] as second parameter to ensure this effect only runs once
+    }, []);
+
+    const handleSearchTextChange = (event) => {
+        setSearchText(event.target.value)
+    }
+
+    const filteredRobots = robots.filter((robot) => {
+        return robot.name.toLowerCase().includes(searchText.toLowerCase())
+    }) 
+    
+    return (
+        <div>
+            { 
+            !robots.length
+                ? <h3>Loading...</h3> 
+                : 
                 <div className='tc'>
                     <h1 className='f1'>RoboFriends</h1>
-                    <SearchBox searchChange = { this.handleSearchTextChange } />
+                    <SearchBox searchChange = { handleSearchTextChange } />
                     <Scroll>
                         <ErrorBoundary>
-                            <CardList robots = { filteredRobots } />
+                            <CardList robots = { 
+                                filteredRobots
+                            } />
                         </ErrorBoundary>
                     </Scroll>
                 </div>
-            )
-        }
-    }
+
+            }
+        </div>
+    )
+
 }
 
 export default App
