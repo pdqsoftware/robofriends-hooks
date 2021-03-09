@@ -39,7 +39,7 @@ function App()  {
                 ? <h3>Loading...</h3> 
                 : 
                 <div className='tc'>
-                    <h1 className='f1'>RoboFriends</h1>
+                    <h1 className='f1'>RoboFriends - with Hooks</h1>
                     <SearchBox searchChange = { handleSearchTextChange } />
                     <Scroll>
                         <ErrorBoundary>
